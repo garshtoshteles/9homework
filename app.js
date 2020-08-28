@@ -10,101 +10,99 @@ const outputPath = path.join(OUTPUT_DIR, "team.html");
 
 const render = require("./lib/htmlRenderer");
 
-console.log("Hi, welcome to Node Pizza");
+// Write code to use inquirer to gather information about the development team members,
+// and to create objects for each team member (using the correct classes as blueprints!)
+let idnum = 0;
+const employeeObjs = [];
 
-var questions = [
-  {
-    type: "confirm",
-    name: "toBeDelivered",
-    message: "Is this for delivery?",
-    default: false,
-  },
-  {
-    type: "input",
-    name: "phone",
-    message: "What's your phone number?",
-    validate: function (value) {
-      var pass = value.match(
-        /^([01]{1})?[-.\s]?\(?(\d{3})\)?[-.\s]?(\d{3})[-.\s]?(\d{4})\s?((?:#|ext\.?\s?|x\.?\s?){1}(?:\d+)?)?$/i
-      );
-      if (pass) {
-        return true;
-      }
+console.log("Greetings. Please tell me about your team.");
 
-      return "Please enter a valid phone number";
-    },
-  },
+var roleQ = [
   {
     type: "list",
-    name: "size",
-    message: "What size do you need?",
-    choices: ["Large", "Medium", "Small"],
-    filter: function (val) {
-      return val.toLowerCase();
-    },
-  },
-  {
-    type: "input",
-    name: "quantity",
-    message: "How many do you need?",
-    validate: function (value) {
-      var valid = !isNaN(parseFloat(value));
-      return valid || "Please enter a number";
-    },
-    filter: Number,
-  },
-  {
-    type: "expand",
-    name: "toppings",
-    message: "What about the toppings?",
-    choices: [
-      {
-        key: "p",
-        name: "Pepperoni and cheese",
-        value: "PepperoniCheese",
-      },
-      {
-        key: "a",
-        name: "All dressed",
-        value: "alldressed",
-      },
-      {
-        key: "w",
-        name: "Hawaiian",
-        value: "hawaiian",
-      },
-    ],
-  },
-  {
-    type: "rawlist",
-    name: "beverage",
-    message: "You also get a free 2L beverage",
-    choices: ["Pepsi", "7up", "Coke"],
-  },
-  {
-    type: "input",
-    name: "comments",
-    message: "Any comments on your purchase experience?",
-    default: "Nope, all good!",
-  },
-  {
-    type: "list",
-    name: "prize",
-    message: "For leaving a comment, you get a freebie",
-    choices: ["cake", "fries"],
-    when: function (answers) {
-      return answers.comments !== "Nope, all good!";
-    },
+    name: "role",
+    message: "What's this employee's role?",
+    choices: ["Engineer", "Intern", "Manager"],
   },
 ];
 
-inquirer.prompt(questions).then((answers) => {});
-// Write code to use inquirer to gather information about the development team members,
-// and to create objects for each team member (using the correct classes as blueprints!)
+var standardQs = [
+  {
+    type: "input",
+    name: "name",
+    message: "What's this employee's name?",
+    default: "unnamed",
+  },
+  {
+    type: "input",
+    name: "email",
+    message: "What's this employee's email?",
+    default: "none@no.ne",
+  },
+  {},
+  {
+    type: "confirm",
+    name: "another",
+    message: "Would you like to add another employee?",
+    default: false,
+  },
+];
 
-// After the user has input all employees desired, call the `render` function (required
-// above) and pass in an array containing all employee objects; the `render` function will
-// generate and return a block of HTML including templated divs for each employee!
+var roleBank = [
+  {
+    type: "input",
+    name: "github",
+    message: "What's this employee's GitHub username?",
+    default: "none",
+  },
+  {
+    type: "input",
+    name: "school",
+    message: "Where does this intern go to school?",
+    default: "none",
+  },
+  {
+    type: "input",
+    name: "office",
+    message: "What's this manager's office number?",
+    default: "none",
+  },
+];
+
+function inquireEmployee() {
+  inquirer.prompt(roleQ).then((roleA) => {
+    idnum++;
+    var standardQsCopy = standardQs;
+    //based on the role they have, push a roleBank question to the standardquestions copy
+    if (roleA.role === "Engineer") {
+      // code for engineer q
+      standardQsCopy[2] = roleBank[0];
+    } else if (roleA.role === "Intern") {
+      // code for intern Q
+      standardQsCopy[2] = roleBank[1];
+    } else {
+      // code for manager question
+      standardQsCopy[2] = roleBank[2];
+    }
+    inquirer.prompt(standardQsCopy).then((answers) => {
+      // push an object with all the meployee data to the employeeObjs array
+      employeeObjs.push({ id: idnum, ...roleA, ...answers });
+      console.log(JSON.stringify(employeeObjs));
+      if (answers.another) {
+        // if they want to enter another employee, have the function call itself
+        inquireEmployee();
+      } else {
+        // in here is what happens when they're done entering employees, it will only happen once even though these functions are executing inside one another
+        render(employeeObjs);
+        // After the user has input all employees desired, call the `render` function (required
+        // above) and pass in an array containing all employee objects; the `render` function will
+        // generate and return a block of HTML including templated divs for each employee!
+      }
+    });
+  });
+}
+
+inquireEmployee();
 
 // After you have your html, you're now ready to create an HTML file using the HTML
 // returned from the `render` function. Now write it to a file named `team.html` in the
