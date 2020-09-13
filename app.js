@@ -9,6 +9,7 @@ const OUTPUT_DIR = path.resolve(__dirname, "output");
 const outputPath = path.join(OUTPUT_DIR, "team.html");
 
 const render = require("./lib/htmlRenderer");
+const Employee = require("./lib/Employee");
 
 // Write code to use inquirer to gather information about the development team members,
 // and to create objects for each team member (using the correct classes as blueprints!)
@@ -85,8 +86,23 @@ function inquireEmployee() {
       standardQsCopy[2] = roleBank[2];
     }
     inquirer.prompt(standardQsCopy).then((answers) => {
+      const answersCopy = answers;
+      delete answersCopy.another;
       // push an object with all the meployee data to the employeeObjs array
-      employeeObjs.push({ id: idnum, ...roleA, ...answers });
+      // THIS IS DONE IMPROPERLY. THE CONCEPT IS FINE, BUT IT SHOULD BE AN ARRAY OF EMPLOYEE OBJS MADE WITH THE EMPLOYEE CONSTRUCTOR
+      if (roleA.role === "Engineer") {
+        // code for if an engineer
+        let newEng = new Engineer(idnum, roleA.role, ...answersCopy);
+        employeeObjs.push(newEng);
+      } else if (roleA.role === "Intern") {
+        // code for if an intern
+        let newInt = new Intern(idnum, roleA.role, ...answersCopy);
+        employeeObjs.push(newInt);
+      } else {
+        // code for if a manager
+        let newMan = new Manager(idnum, roleA.role, ...answersCopy);
+        employeeObjs.push(newMan);
+      }
       console.log(JSON.stringify(employeeObjs));
       if (answers.another) {
         // if they want to enter another employee, have the function call itself
