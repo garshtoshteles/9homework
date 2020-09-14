@@ -86,21 +86,37 @@ function inquireEmployee() {
       standardQsCopy[2] = roleBank[2];
     }
     inquirer.prompt(standardQsCopy).then((answers) => {
-      const answersCopy = answers;
-      delete answersCopy.another;
-      // push an object with all the meployee data to the employeeObjs array
-      // THIS IS DONE IMPROPERLY. THE CONCEPT IS FINE, BUT IT SHOULD BE AN ARRAY OF EMPLOYEE OBJS MADE WITH THE EMPLOYEE CONSTRUCTOR
+      console.log(answers);
+      // push an object with all the employee data to the employeeObjs array
       if (roleA.role === "Engineer") {
         // code for if an engineer
-        let newEng = new Engineer(idnum, roleA.role, ...answersCopy);
+        let newEng = new Engineer(
+          idnum,
+          roleA.role,
+          answers.name,
+          answers.email,
+          answers.github
+        );
         employeeObjs.push(newEng);
       } else if (roleA.role === "Intern") {
         // code for if an intern
-        let newInt = new Intern(idnum, roleA.role, ...answersCopy);
+        let newInt = new Intern(
+          idnum,
+          roleA.role,
+          answers.name,
+          answers.email,
+          answers.school
+        );
         employeeObjs.push(newInt);
       } else {
         // code for if a manager
-        let newMan = new Manager(idnum, roleA.role, ...answersCopy);
+        let newMan = new Manager(
+          idnum,
+          roleA.role,
+          answers.name,
+          answers.email,
+          answers.pffice
+        );
         employeeObjs.push(newMan);
       }
       console.log(JSON.stringify(employeeObjs));
