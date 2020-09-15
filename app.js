@@ -125,7 +125,10 @@ function inquireEmployee() {
         inquireEmployee();
       } else {
         // in here is what happens when they're done entering employees, it will only happen once even though these functions are executing inside one another
-        render(employeeObjs);
+        const finalPage = render(employeeObjs);
+        fs.writeFile(outputPath, finalPage, (err) => {
+          if (err) return console.log(err);
+        });
         // After the user has input all employees desired, call the `render` function (required
         // above) and pass in an array containing all employee objects; the `render` function will
         // generate and return a block of HTML including templated divs for each employee!
