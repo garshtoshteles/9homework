@@ -78,7 +78,7 @@ function inquireEmployee() {
           let c = new Intern(idnum, a.role, b.name, b.email, b.school);
           employeeObjs.push(c);
         } else {
-          let c = new Manager(idnum, a.role, b.name, b.email, b.pffice);
+          let c = new Manager(idnum, a.role, b.name, b.email, b.office);
           employeeObjs.push(c);
         }
         if (b.another) inquireEmployee();
